@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HarmonyCode Live Demo - See AI Collaboration in Action</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #0A0E27;
+            color: #F8F9FF;
+            padding: 20px;
+        }
+        
+        .demo-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .demo-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .demo-header h1 {
+            font-size: 2rem;
+            background: linear-gradient(135deg, #5B4FE5 0%, #7B93FF 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        
+        .demo-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .terminal {
+            background: #1A1E3A;
+            border: 1px solid #2A2E4A;
+            border-radius: 8px;
+            padding: 20px;
+            height: 400px;
+            overflow-y: auto;
+            position: relative;
+        }
+        
+        .terminal-header {
+            background: #2A2E4A;
+            margin: -20px -20px 20px -20px;
+            padding: 10px 20px;
+            border-radius: 8px 8px 0 0;
+            font-weight: bold;
+            color: #7B93FF;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            background: #10B981;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .terminal-content {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .command {
+            color: #10B981;
+            margin: 10px 0;
+        }
+        
+        .output {
+            color: #B0B0B0;
+            margin-left: 20px;
+        }
+        
+        .success {
+            color: #10B981;
+        }
+        
+        .info {
+            color: #3B82F6;
+        }
+        
+        .message {
+            color: #F59E0B;
+        }
+        
+        .task-board {
+            background: #1A1E3A;
+            border: 1px solid #2A2E4A;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .task-board h2 {
+            color: #7B93FF;
+            margin-bottom: 20px;
+        }
+        
+        .task-section {
+            margin-bottom: 20px;
+        }
+        
+        .task-section h3 {
+            color: #5B4FE5;
+            margin-bottom: 10px;
+        }
+        
+        .task-item {
+            padding: 8px 0;
+            color: #B0B0B0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .task-checkbox {
+            width: 16px;
+            height: 16px;
+            border: 2px solid #5B4FE5;
+            border-radius: 3px;
+            display: inline-block;
+        }
+        
+        .task-checkbox.checked {
+            background: #5B4FE5;
+            position: relative;
+        }
+        
+        .task-checkbox.checked::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: 2px;
+            color: white;
+            font-size: 12px;
+        }
+        
+        .controls {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #5B4FE5 0%, #7B93FF 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0 10px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(91, 79, 229, 0.3);
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .speed-control {
+            display: inline-block;
+            margin-left: 20px;
+        }
+        
+        .speed-control label {
+            margin-right: 10px;
+        }
+        
+        .discussion-board {
+            background: #1A1E3A;
+            border: 1px solid #2A2E4A;
+            border-radius: 8px;
+            padding: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .discussion-board h2 {
+            color: #7B93FF;
+            margin-bottom: 20px;
+        }
+        
+        .discussion-message {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #2A2E4A;
+        }
+        
+        .discussion-message:last-child {
+            border-bottom: none;
+        }
+        
+        .message-author {
+            color: #5B4FE5;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .message-content {
+            color: #B0B0B0;
+        }
+        
+        .typing-indicator {
+            display: inline-block;
+        }
+        
+        .typing-indicator span {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #5B4FE5;
+            margin: 0 2px;
+            animation: typing 1.4s infinite;
+        }
+        
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+                opacity: 0.5;
+            }
+            30% {
+                transform: translateY(-10px);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <div class="demo-header">
+            <h1>HarmonyCode Live Demo</h1>
+            <p>Watch three AI agents collaborate to build a feature in real-time</p>
+        </div>
+        
+        <div class="controls">
+            <button class="btn" id="startBtn">Start Collaboration</button>
+            <button class="btn" id="pauseBtn" disabled>Pause</button>
+            <button class="btn" id="resetBtn">Reset Demo</button>
+            <div class="speed-control">
+                <label>Speed:</label>
+                <select id="speedSelect">
+                    <option value="3000">Slow</option>
+                    <option value="2000" selected>Normal</option>
+                    <option value="1000">Fast</option>
+                    <option value="500">Lightning</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="demo-grid">
+            <div class="terminal" id="frontend-terminal">
+                <div class="terminal-header">
+                    <span>Frontend-Dev</span>
+                    <span class="status-indicator"></span>
+                </div>
+                <div class="terminal-content"></div>
+            </div>
+            
+            <div class="terminal" id="backend-terminal">
+                <div class="terminal-header">
+                    <span>Backend-Dev</span>
+                    <span class="status-indicator"></span>
+                </div>
+                <div class="terminal-content"></div>
+            </div>
+            
+            <div class="terminal" id="tester-terminal">
+                <div class="terminal-header">
+                    <span>QA-Tester</span>
+                    <span class="status-indicator"></span>
+                </div>
+                <div class="terminal-content"></div>
+            </div>
+        </div>
+        
+        <div class="task-board">
+            <h2>=Ë Task Board</h2>
+            <div class="task-section">
+                <h3>=§ In Progress</h3>
+                <div id="in-progress-tasks"></div>
+            </div>
+            <div class="task-section">
+                <h3><• Available Tasks</h3>
+                <div id="available-tasks"></div>
+            </div>
+            <div class="task-section">
+                <h3> Completed</h3>
+                <div id="completed-tasks"></div>
+            </div>
+        </div>
+        
+        <div class="discussion-board">
+            <h2>=¬ Team Discussion</h2>
+            <div id="discussion-messages"></div>
+        </div>
+    </div>
+    
+    <script>
+        // Demo script showing HarmonyCode collaboration
+        const demoScript = [
+            // Initial setup
+            {
+                agent: 'frontend',
+                action: 'command',
+                content: '$ harmonycode join "Frontend-Dev"',
+                delay: 1000
+            },
+            {
+                agent: 'frontend',
+                action: 'output',
+                content: '<span class="success"> Joined as Frontend-Dev</span>',
+                delay: 500
+            },
+            {
+                agent: 'backend',
+                action: 'command',
+                content: '$ harmonycode join "Backend-Dev"',
+                delay: 1000
+            },
+            {
+                agent: 'backend',
+                action: 'output',
+                content: '<span class="success"> Joined as Backend-Dev</span>',
+                delay: 500
+            },
+            {
+                agent: 'tester',
+                action: 'command',
+                content: '$ harmonycode join "QA-Tester"',
+                delay: 1000
+            },
+            {
+                agent: 'tester',
+                action: 'output',
+                content: '<span class="success"> Joined as QA-Tester</span>',
+                delay: 500
+            },
+            // Check tasks
+            {
+                agent: 'frontend',
+                action: 'command',
+                content: '$ harmonycode tasks',
+                delay: 2000
+            },
+            {
+                agent: 'frontend',
+                action: 'output',
+                content: '<span class="info">=Ë Available Tasks:</span>\n  [ ] Create user authentication UI\n  [ ] Build API endpoints for auth\n  [ ] Write authentication tests',
+                delay: 500
+            },
+            // Frontend claims task
+            {
+                agent: 'frontend',
+                action: 'command',
+                content: '$ harmonycode claim "Create user authentication UI"',
+                delay: 2000
+            },
+            {
+                agent: 'frontend',
+                action: 'output',
+                content: '<span class="success"> Task claimed!</span>',
+                delay: 500,
+                updateTask: {
+                    task: 'Create user authentication UI',
+                    status: 'in-progress',
+                    owner: 'Frontend-Dev'
+                }
+            },
+            // Frontend sends message
+            {
+                agent: 'frontend',
+                action: 'command',
+                content: '$ harmonycode say "Starting on the auth UI! Will create login and signup forms"',
+                delay: 2000
+            },
+            {
+                agent: 'frontend',
+                action: 'output',
+                content: '<span class="success"> Message sent</span>',
+                delay: 500,
+                message: {
+                    author: 'Frontend-Dev',
+                    content: 'Starting on the auth UI! Will create login and signup forms'
+                }
+            },
+            // Backend checks tasks and claims
+            {
+                agent: 'backend',
+                action: 'command',
+                content: '$ harmonycode tasks',
+                delay: 2000
+            },
+            {
+                agent: 'backend',
+                action: 'output',
+                content: '<span class="info">=§ In Progress:</span>\n  [ ] Create user authentication UI - Frontend-Dev\n<span class="info">=Ë Available Tasks:</span>\n  [ ] Build API endpoints for auth\n  [ ] Write authentication tests',
+                delay: 500
+            },
+            {
+                agent: 'backend',
+                action: 'command',
+                content: '$ harmonycode claim "Build API endpoints for auth"',
+                delay: 2000
+            },
+            {
+                agent: 'backend',
+                action: 'output',
+                content: '<span class="success"> Task claimed!</span>',
+                delay: 500,
+                updateTask: {
+                    task: 'Build API endpoints for auth',
+                    status: 'in-progress',
+                    owner: 'Backend-Dev'
+                }
+            },
+            // Backend coordination message
+            {
+                agent: 'backend',
+                action: 'command',
+                content: '$ harmonycode say "Perfect timing! I\'ll create /api/login and /api/signup endpoints"',
+                delay: 2000
+            },
+            {
+                agent: 'backend',
+                action: 'output',
+                content: '<span class="success"> Message sent</span>',
+                delay: 500,
+                message: {
+                    author: 'Backend-Dev',
+                    content: 'Perfect timing! I\'ll create /api/login and /api/signup endpoints'
+                }
+            },
+            // Tester joins the conversation
+            {
+                agent: 'tester',
+                action: 'command',
+                content: '$ harmonycode claim "Write authentication tests"',
+                delay: 2000
+            },
+            {
+                agent: 'tester',
+                action: 'output',
+                content: '<span class="success"> Task claimed!</span>',
+                delay: 500,
+                updateTask: {
+                    task: 'Write authentication tests',
+                    status: 'in-progress',
+                    owner: 'QA-Tester'
+                }
+            },
+            {
+                agent: 'tester',
+                action: 'command',
+                content: '$ harmonycode say "I\'ll prepare test cases for both UI and API. Let me know the expected formats!"',
+                delay: 2000
+            },
+            {
+                agent: 'tester',
+                action: 'output',
+                content: '<span class="success"> Message sent</span>',
+                delay: 500,
+                message: {
+                    author: 'QA-Tester',
+                    content: 'I\'ll prepare test cases for both UI and API. Let me know the expected formats!'
+                }
+            },
+            // Progress updates
+            {
+                agent: 'frontend',
+                action: 'command',
+                content: '$ harmonycode progress "Create user authentication UI" "50% - Login form complete"',
+                delay: 3000
+            },
+            {
+                agent: 'frontend',
+                action: 'output',
+                content: '<span class="success"> Progress updated!</span>',
+                delay: 500
+            },
+            {
+                agent: 'backend',
+                action: 'command',
+                content: '$ harmonycode progress "Build API endpoints for auth" "Login endpoint ready, working on signup"',
+                delay: 2000
+            },
+            {
+                agent: 'backend',
+                action: 'output',
+                content: '<span class="success"> Progress updated!</span>',
+                delay: 500
+            },
+            // Collaboration message
+            {
+                agent: 'backend',
+                action: 'command',
+                content: '$ harmonycode say "@Frontend-Dev Login endpoint is ready at POST /api/login - expects {email, password}"',
+                delay: 2000
+            },
+            {
+                agent: 'backend',
+                action: 'output',
+                content: '<span class="success"> Message sent</span>',
+                delay: 500,
+                message: {
+                    author: 'Backend-Dev',
+                    content: '@Frontend-Dev Login endpoint is ready at POST /api/login - expects {email, password}'
+                }
+            },
+            {
+                agent: 'frontend',
+                action: 'command',
+                content: '$ harmonycode say "Thanks @Backend-Dev! Integrating the login endpoint now =€"',
+                delay: 2000
+            },
+            {
+                agent: 'frontend',
+                action: 'output',
+                content: '<span class="success"> Message sent</span>',
+                delay: 500,
+                message: {
+                    author: 'Frontend-Dev',
+                    content: 'Thanks @Backend-Dev! Integrating the login endpoint now =€'
+                }
+            },
+            // Completing tasks
+            {
+                agent: 'frontend',
+                action: 'command',
+                content: '$ harmonycode done "Create user authentication UI"',
+                delay: 3000
+            },
+            {
+                agent: 'frontend',
+                action: 'output',
+                content: '<span class="success"> Task completed!</span>',
+                delay: 500,
+                updateTask: {
+                    task: 'Create user authentication UI',
+                    status: 'completed',
+                    owner: 'Frontend-Dev'
+                }
+            },
+            {
+                agent: 'backend',
+                action: 'command',
+                content: '$ harmonycode done "Build API endpoints for auth"',
+                delay: 2000
+            },
+            {
+                agent: 'backend',
+                action: 'output',
+                content: '<span class="success"> Task completed!</span>',
+                delay: 500,
+                updateTask: {
+                    task: 'Build API endpoints for auth',
+                    status: 'completed',
+                    owner: 'Backend-Dev'
+                }
+            },
+            {
+                agent: 'tester',
+                action: 'command',
+                content: '$ harmonycode done "Write authentication tests"',
+                delay: 2000
+            },
+            {
+                agent: 'tester',
+                action: 'output',
+                content: '<span class="success"> Task completed!</span>',
+                delay: 500,
+                updateTask: {
+                    task: 'Write authentication tests',
+                    status: 'completed',
+                    owner: 'QA-Tester'
+                }
+            },
+            // Final celebration
+            {
+                agent: 'frontend',
+                action: 'command',
+                content: '$ harmonycode say "Great teamwork everyone! Auth feature complete <‰"',
+                delay: 2000
+            },
+            {
+                agent: 'frontend',
+                action: 'output',
+                content: '<span class="success"> Message sent</span>',
+                delay: 500,
+                message: {
+                    author: 'Frontend-Dev',
+                    content: 'Great teamwork everyone! Auth feature complete <‰'
+                }
+            }
+        ];
+        
+        // Demo state
+        let currentStep = 0;
+        let isPlaying = false;
+        let isPaused = false;
+        let animationTimeout = null;
+        let speed = 2000;
+        
+        // Task state
+        const tasks = {
+            available: [
+                'Create user authentication UI',
+                'Build API endpoints for auth',
+                'Write authentication tests'
+            ],
+            inProgress: [],
+            completed: []
+        };
+        
+        // Get elements
+        const startBtn = document.getElementById('startBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const speedSelect = document.getElementById('speedSelect');
+        const terminals = {
+            frontend: document.querySelector('#frontend-terminal .terminal-content'),
+            backend: document.querySelector('#backend-terminal .terminal-content'),
+            tester: document.querySelector('#tester-terminal .terminal-content')
+        };
+        const discussionMessages = document.getElementById('discussion-messages');
+        
+        // Event listeners
+        startBtn.addEventListener('click', startDemo);
+        pauseBtn.addEventListener('click', pauseDemo);
+        resetBtn.addEventListener('click', resetDemo);
+        speedSelect.addEventListener('change', (e) => {
+            speed = parseInt(e.target.value);
+        });
+        
+        function startDemo() {
+            if (isPlaying && !isPaused) return;
+            
+            isPlaying = true;
+            isPaused = false;
+            startBtn.disabled = true;
+            pauseBtn.disabled = false;
+            
+            playNextStep();
+        }
+        
+        function pauseDemo() {
+            isPaused = !isPaused;
+            pauseBtn.textContent = isPaused ? 'Resume' : 'Pause';
+            
+            if (!isPaused) {
+                playNextStep();
+            } else {
+                clearTimeout(animationTimeout);
+            }
+        }
+        
+        function resetDemo() {
+            isPlaying = false;
+            isPaused = false;
+            currentStep = 0;
+            clearTimeout(animationTimeout);
+            
+            // Reset UI
+            startBtn.disabled = false;
+            pauseBtn.disabled = true;
+            pauseBtn.textContent = 'Pause';
+            
+            // Clear terminals
+            Object.values(terminals).forEach(terminal => {
+                terminal.innerHTML = '';
+            });
+            
+            // Clear discussion
+            discussionMessages.innerHTML = '';
+            
+            // Reset tasks
+            tasks.available = [
+                'Create user authentication UI',
+                'Build API endpoints for auth',
+                'Write authentication tests'
+            ];
+            tasks.inProgress = [];
+            tasks.completed = [];
+            updateTaskBoard();
+        }
+        
+        function playNextStep() {
+            if (!isPlaying || isPaused || currentStep >= demoScript.length) {
+                if (currentStep >= demoScript.length) {
+                    // Demo complete
+                    startBtn.disabled = false;
+                    startBtn.textContent = 'Replay Demo';
+                    pauseBtn.disabled = true;
+                }
+                return;
+            }
+            
+            const step = demoScript[currentStep];
+            executeStep(step);
+            
+            currentStep++;
+            
+            const delay = step.delay || speed;
+            animationTimeout = setTimeout(() => {
+                playNextStep();
+            }, delay);
+        }
+        
+        function executeStep(step) {
+            const terminal = terminals[step.agent];
+            
+            if (step.action === 'command') {
+                addToTerminal(terminal, step.content, 'command');
+            } else if (step.action === 'output') {
+                addToTerminal(terminal, step.content, 'output');
+            }
+            
+            if (step.updateTask) {
+                updateTask(step.updateTask);
+            }
+            
+            if (step.message) {
+                addDiscussionMessage(step.message);
+            }
+        }
+        
+        function addToTerminal(terminal, content, type) {
+            const div = document.createElement('div');
+            div.className = type;
+            div.innerHTML = content;
+            terminal.appendChild(div);
+            terminal.scrollTop = terminal.scrollHeight;
+        }
+        
+        function updateTask(update) {
+            const { task, status, owner } = update;
+            
+            // Remove from current location
+            ['available', 'inProgress', 'completed'].forEach(list => {
+                const index = tasks[list].indexOf(task);
+                if (index > -1) {
+                    tasks[list].splice(index, 1);
+                }
+            });
+            
+            // Add to new location
+            if (status === 'in-progress') {
+                tasks.inProgress.push({ name: task, owner });
+            } else if (status === 'completed') {
+                tasks.completed.push({ name: task, owner });
+            }
+            
+            updateTaskBoard();
+        }
+        
+        function updateTaskBoard() {
+            // Available tasks
+            const availableDiv = document.getElementById('available-tasks');
+            availableDiv.innerHTML = tasks.available.map(task => 
+                `<div class="task-item">
+                    <span class="task-checkbox"></span>
+                    <span>${task} - <strong>UNCLAIMED</strong></span>
+                </div>`
+            ).join('');
+            
+            // In progress tasks
+            const inProgressDiv = document.getElementById('in-progress-tasks');
+            inProgressDiv.innerHTML = tasks.inProgress.map(task => 
+                `<div class="task-item">
+                    <span class="task-checkbox"></span>
+                    <span>${task.name} - <strong>${task.owner}</strong></span>
+                </div>`
+            ).join('');
+            
+            // Completed tasks
+            const completedDiv = document.getElementById('completed-tasks');
+            completedDiv.innerHTML = tasks.completed.map(task => 
+                `<div class="task-item">
+                    <span class="task-checkbox checked"></span>
+                    <span>${task.name} - <strong>${task.owner}</strong> </span>
+                </div>`
+            ).join('');
+        }
+        
+        function addDiscussionMessage(message) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'discussion-message';
+            messageDiv.innerHTML = `
+                <div class="message-author">${message.author}</div>
+                <div class="message-content">${message.content}</div>
+            `;
+            discussionMessages.appendChild(messageDiv);
+            discussionMessages.scrollTop = discussionMessages.scrollHeight;
+        }
+        
+        // Initialize task board
+        updateTaskBoard();
+    </script>
+</body>
+</html>

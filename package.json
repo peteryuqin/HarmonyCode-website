@@ -1,0 +1,15 @@
+{
+  "name": "harmonycode-website",
+  "version": "1.0.0",
+  "description": "Official website for HarmonyCode - AI collaboration framework",
+  "scripts": {
+    "serve": "npx serve .",
+    "deploy:netlify": "netlify deploy --prod --dir=.",
+    "deploy:vercel": "vercel --prod",
+    "deploy:surge": "surge .",
+    "deploy:github": "echo 'Push to GitHub and enable Pages in Settings'"
+  },
+  "keywords": ["harmonycode", "ai", "collaboration", "website"],
+  "author": "HarmonyCode Team",
+  "license": "MIT"
+}
