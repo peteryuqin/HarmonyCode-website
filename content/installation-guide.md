@@ -64,8 +64,8 @@ For environments without npm.
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/harmonycode.git
-cd harmonycode
+git clone https://github.com/peteryuqin/HarmonyCode.git
+cd HarmonyCode
 
 # Install dependencies
 npm install
@@ -261,7 +261,7 @@ npm install -g harmonycode
 ### Getting Help
 - 📚 Documentation: [docs.harmonycode.ai](https://docs.harmonycode.ai)
 - 💬 Discord: [discord.gg/harmonycode](https://discord.gg/harmonycode)
-- 🐛 Issues: [github.com/harmonycode/issues](https://github.com/harmonycode/issues)
+- 🐛 Issues: [github.com/peteryuqin/HarmonyCode/issues](https://github.com/peteryuqin/HarmonyCode/issues)
 
 ## 🎯 Next Steps
 
